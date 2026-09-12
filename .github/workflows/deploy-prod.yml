@@ -42,23 +42,21 @@ jobs:
         run: |
           az extension add -n ml -y
 
-      - name: Register required resource providers
-        run: |
-          az provider register --namespace Microsoft.MachineLearningServices
-          az provider register --namespace Microsoft.Storage
-          az provider register --namespace Microsoft.ContainerRegistry
-          az provider register --namespace Microsoft.KeyVault
-
       - name: Detect Azure ML workspace
         id: detect
         run: |
           RG_NAME=$(az group list --query "[?starts_with(name,'rg-ai300-l')].name | [0]" -o tsv)
+
           if [ -z "$RG_NAME" ]; then
             echo "No resource group starting with rg-ai300-l found." >&2
             exit 1
           fi
 
-          WS_NAME=$(az ml workspace list --resource-group "$RG_NAME" --query "[?starts_with(name,'mlw-ai300-l')].name | [0]" -o tsv)
+          WS_NAME=$(az ml workspace list \
+            --resource-group "$RG_NAME" \
+            --query "[?starts_with(name,'mlw-ai300-l')].name | [0]" \
+            -o tsv)
+
           if [ -z "$WS_NAME" ]; then
             echo "No workspace starting with mlw-ai300-l found in $RG_NAME." >&2
             exit 1
@@ -90,6 +88,7 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
+
             const body = [
               '🚀 Deployment workflow completed.',
               '',
