@@ -42,6 +42,13 @@ jobs:
         run: |
           az extension add -n ml -y
 
+      - name: Register required resource providers
+        run: |
+          az provider register --namespace Microsoft.MachineLearningServices
+          az provider register --namespace Microsoft.Storage
+          az provider register --namespace Microsoft.ContainerRegistry
+          az provider register --namespace Microsoft.KeyVault
+
       - name: Detect Azure ML workspace
         id: detect
         run: |
